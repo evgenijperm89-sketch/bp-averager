@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Усреднение давления и пульса</title>
+    <title>Калькулятор давления</title>
     
-    <!-- 🎨 Иконки и PWA-настройки -->
+    <!-- PWA настройки -->
     <meta name="theme-color" content="#0d6efd">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,54 +13,170 @@
     <meta name="apple-mobile-web-app-title" content="Давление">
     <link rel="manifest" href="manifest.json">
     
-    <!-- Встроенная SVG-иконка (сердце + пульс, синяя подложка) -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%230d6efd'/%3E%3Cpath d='M256 400c-10 0-20-4-28-12L120 280c-40-40-40-100 0-140s100-40 140 0l-4 4 4-4c40-40 100-40 140 0s40 100 0 140L284 388c-8 8-18 12-28 12z' fill='%23fff'/%3E%3Cpath d='M160 240h40l20-40 40 80 20-40h80' fill='none' stroke='%230d6efd' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%230d6efd'/%3E%3Cpath d='M256 400c-10 0-20-4-28-12L120 280c-40-40-40-100 0-140s100-40 140 0l-4 4 4-4c40-40 100-40 140 0s40 100 0 140L284 388c-8 8-18 12-28 12z' fill='%23fff'/%3E%3Cpath d='M160 240h40l20-40 40 80 20-40h80' fill='none' stroke='%230d6efd' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+    <!-- Иконки -->
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+    <link rel="apple-touch-icon" href="icon-512.png">
 
     <style>
-        :root { --primary: #0d6efd; --bg: #f4f6f9; --card: #ffffff; --text: #212529; --muted: #6c757d; --success: #198754; --error: #dc3545; --radius: 12px; }
+        :root {
+            --primary: #0d6efd;
+            --bg: #f4f6f9;
+            --card: #ffffff;
+            --text: #212529;
+            --muted: #6c757d;
+            --success: #198754;
+            --error: #dc3545;
+            --radius: 12px;
+        }
         * { box-sizing: border-box; }
-        body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; -webkit-tap-highlight-color: transparent; }
-        .container { background: var(--card); padding: 1.5rem; border-radius: var(--radius); box-shadow: 0 4px 16px rgba(0,0,0,0.08); width: 100%; max-width: 520px; }
-        h1 { text-align: center; margin: 0 0 1.2rem; font-size: 1.4rem; }
-        .measurement { background: #f8f9fa; padding: 0.8rem; border-radius: 8px; margin-bottom: 0.8rem; }
-        .measurement h3 { margin: 0 0 0.5rem; font-size: 0.95rem; color: var(--muted); }
-        .input-row { display: flex; gap: 8px; flex-wrap: wrap; }
-        label { display: flex; flex-direction: column; flex: 1; min-width: 80px; font-size: 0.8rem; color: var(--muted); }
-        input { padding: 8px; border: 1px solid #dee2e6; border-radius: 6px; font-size: 1rem; margin-top: 4px; width: 100%; }
-        input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(13,110,253,0.15); }
-        .buttons { display: flex; gap: 8px; margin-top: 0.8rem; }
-        button { flex: 1; padding: 10px; border: none; border-radius: 8px; font-size: 0.95rem; cursor: pointer; transition: 0.2s; }
-        .btn-calc { background: var(--primary); color: white; }
-        .btn-calc:hover { background: #0b5ed7; }
-        .btn-clear { background: #e9ecef; color: var(--text); }
-        .btn-clear:hover { background: #dee2e6; }
-        #result { margin-top: 1rem; padding: 1rem; background: #d1e7dd; border-radius: 8px; text-align: center; display: none; }
-        #result.error { background: #f8d7da; color: var(--error); }
-        #result h2 { margin: 0 0 0.3rem; font-size: 1.1rem; }
-        #result .value { font-size: 1.6rem; font-weight: bold; color: var(--success); margin: 0.5rem 0; }
-        #result.error .value { color: var(--error); }
-        .note { font-size: 0.8rem; color: var(--muted); text-align: center; margin-top: 1rem; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .container {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 520px;        }
+        h1 {
+            text-align: center;
+            margin: 0 0 1.2rem;
+            font-size: 1.4rem;
+        }
+        .measurement {
+            background: #f8f9fa;
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+        }
+        .measurement h3 {
+            margin: 0 0 0.5rem;
+            font-size: 0.95rem;
+            color: var(--muted);
+        }
+        .input-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        label {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 80px;
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+        input {
+            padding: 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin-top: 4px;
+            width: 100%;
+        }
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(13,110,253,0.15);
+        }
+        .buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 0.8rem;
+        }
+        button {
+            flex: 1;            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-calc {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-calc:hover {
+            background: #0b5ed7;
+        }
+        .btn-clear {
+            background: #e9ecef;
+            color: var(--text);
+        }
+        .btn-clear:hover {
+            background: #dee2e6;
+        }
+        #result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #d1e7dd;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+        #result.error {
+            background: #f8d7da;
+            color: var(--error);
+        }
+        #result h2 {
+            margin: 0 0 0.3rem;
+            font-size: 1.1rem;
+        }
+        #result .value {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: var(--success);
+            margin: 0.5rem 0;
+        }
+        #result.error .value {
+            color: var(--error);
+        }
+        .note {
+            font-size: 0.8rem;
+            color: var(--muted);
+            text-align: center;            margin-top: 1rem;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🩺 Давление + Пульс</h1>
+        <h1>🩺 Калькулятор давления</h1>
         <form id="bpForm">
-            <div class="measurement"><h3>Замер 1</h3><div class="input-row">                <label>Верхнее <input type="number" id="sys1" min="50" max="300" required></label>
-                <label>Нижнее <input type="number" id="dia1" min="30" max="200" required></label>
-                <label>Пульс <input type="number" id="pulse1" min="30" max="220" required></label>
-            </div></div>
-            <div class="measurement"><h3>Замер 2</h3><div class="input-row">
-                <label>Верхнее <input type="number" id="sys2" min="50" max="300" required></label>
-                <label>Нижнее <input type="number" id="dia2" min="30" max="200" required></label>
-                <label>Пульс <input type="number" id="pulse2" min="30" max="220" required></label>
-            </div></div>
-            <div class="measurement"><h3>Замер 3</h3><div class="input-row">
-                <label>Верхнее <input type="number" id="sys3" min="50" max="300" required></label>
-                <label>Нижнее <input type="number" id="dia3" min="30" max="200" required></label>
-                <label>Пульс <input type="number" id="pulse3" min="30" max="220" required></label>
-            </div></div>
+            <div class="measurement">
+                <h3>Замер 1</h3>
+                <div class="input-row">
+                    <label>Верхнее <input type="number" id="sys1" min="50" max="300" required></label>
+                    <label>Нижнее <input type="number" id="dia1" min="30" max="200" required></label>
+                    <label>Пульс <input type="number" id="pulse1" min="30" max="220" required></label>
+                </div>
+            </div>
+            <div class="measurement">
+                <h3>Замер 2</h3>
+                <div class="input-row">
+                    <label>Верхнее <input type="number" id="sys2" min="50" max="300" required></label>
+                    <label>Нижнее <input type="number" id="dia2" min="30" max="200" required></label>
+                    <label>Пульс <input type="number" id="pulse2" min="30" max="220" required></label>
+                </div>
+            </div>
+            <div class="measurement">
+                <h3>Замер 3</h3>
+                <div class="input-row">
+                    <label>Верхнее <input type="number" id="sys3" min="50" max="300" required></label>
+                    <label>Нижнее <input type="number" id="dia3" min="30" max="200" required></label>
+                    <label>Пульс <input type="number" id="pulse3" min="30" max="220" required></label>
+                </div>
+            </div>
             <div class="buttons">
                 <button type="submit" class="btn-calc">Рассчитать</button>
                 <button type="button" class="btn-clear" id="clearBtn">Очистить</button>
@@ -69,6 +185,7 @@
         <div id="result"></div>
         <div class="note">⚠️ Для бытового учёта. Не заменяет консультацию врача.</div>
     </div>
+
     <script>
         const form = document.getElementById('bpForm');
         const resultDiv = document.getElementById('result');
@@ -77,8 +194,7 @@
         function showResult(html, isError = false) {
             resultDiv.innerHTML = html;
             resultDiv.className = isError ? 'error' : '';
-            resultDiv.style.display = 'block';
-        }
+            resultDiv.style.display = 'block';        }
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -96,7 +212,8 @@
 
             const [s1,s2,s3, d1,d2,d3, p1,p2,p3] = vals;
 
-            if (d1 >= s1 || d2 >= s2 || d3 >= s3) {                return showResult('<h2>⚠️ Ошибка</h2><div class="value">Нижнее давление должно быть строго меньше верхнего в каждом замере</div>', true);
+            if (d1 >= s1 || d2 >= s2 || d3 >= s3) {
+                return showResult('<h2>⚠️ Ошибка</h2><div class="value">Нижнее давление должно быть строго меньше верхнего в каждом замере</div>', true);
             }
 
             const avgSys = Math.round((s1 + s2 + s3) / 3);
