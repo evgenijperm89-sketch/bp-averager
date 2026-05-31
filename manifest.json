@@ -8,9 +8,15 @@
   "theme_color": "#0d6efd",
   "icons": [
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%230d6efd'/%3E%3Cpath d='M256 400c-10 0-20-4-28-12L120 280c-40-40-40-100 0-140s100-40 140 0l-4 4 4-4c40-40 100-40 140 0s40 100 0 140L284 388c-8 8-18 12-28 12z' fill='%23fff'/%3E%3Cpath d='M160 240h40l20-40 40 80 20-40h80' fill='none' stroke='%230d6efd' stroke-width='16' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E",
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any"
     }
   ]
